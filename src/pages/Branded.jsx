@@ -7,6 +7,7 @@ import { Tote, Backpack } from '../components/Illus'
 import BagPreview from '../components/BagPreview'
 import { COLOURS, FONTS, PHOTOS, PRODUCT_STYLE, defaultColour } from '../components/bagDesign'
 import { COLS, PRODUCTS, img } from '../data/store'
+import { useT } from '../i18n'
 
 const KINDS = {
   personal: { t: 'Personal', d: 'For you, a gift or a small group. One to nine bags with a name, initials or a short message stitched on.', min: 1, max: 9, points: ['Name or initials embroidery', 'Gift packaging on request', 'Ready in about two weeks'] },
@@ -46,6 +47,7 @@ function useWide() {
 }
 
 export default function Branded() {
+  const t = useT()
   const [params] = useSearchParams()
   const from = PRODUCTS.find((p) => p.id === params.get('bag'))
   const [kind, setKind] = useState('personal')
@@ -87,13 +89,13 @@ export default function Branded() {
     e.preventDefault()
     const er = {}
     const q = Number(form.qty)
-    if (!q || q < k.min) er.qty = kind === 'corporate' ? 'Corporate orders start at 10 bags' : 'Enter at least 1 bag'
-    else if (q > k.max) er.qty = kind === 'personal' ? 'For ten or more, choose Corporate' : 'Please call us for orders this large'
-    if (form.text.trim().length < 2) er.text = 'Tell us what to put on the bag'
-    if (form.name.trim().length < 2) er.name = 'Enter your full name'
-    if (kind === 'corporate' && form.org.trim().length < 2) er.org = 'Enter the company or school name'
-    if (!PHONE_RE.test(form.phone.replace(/\s/g, ''))) er.phone = 'Enter a Rwandan mobile number, like 0788 000 000'
-    if (form.email && !EMAIL_RE.test(form.email)) er.email = 'That email address looks incomplete'
+    if (!q || q < k.min) er.qty = kind === 'corporate' ? t('Corporate orders start at 10 bags') : t('Enter at least 1 bag')
+    else if (q > k.max) er.qty = kind === 'personal' ? t('For ten or more, choose Corporate') : t('Please call us for orders this large')
+    if (form.text.trim().length < 2) er.text = t('Tell us what to put on the bag')
+    if (form.name.trim().length < 2) er.name = t('Enter your full name')
+    if (kind === 'corporate' && form.org.trim().length < 2) er.org = t('Enter the company or school name')
+    if (!PHONE_RE.test(form.phone.replace(/\s/g, ''))) er.phone = t('Enter a Rwandan mobile number, like 0788 000 000')
+    if (form.email && !EMAIL_RE.test(form.email)) er.email = t('That email address looks incomplete')
     setErrors(er)
     const first = Object.keys(er)[0]
     if (first) return document.getElementById(first)?.focus()
@@ -105,11 +107,11 @@ export default function Branded() {
       <div className="wrap co-done">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease }}>
           <div className="tick" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></div>
-          <div className="eyebrow">Request received</div>
-          <h1 className="caps">Thank you, {done.name}.</h1>
-          <p>We have your {done.kind} request for {done.q} branded {done.q === 1 ? 'bag' : 'bags'} (reference <b>{done.ref}</b>). We will reply within two working days with a quote and a sample plan.</p>
-          <p className="note">This is a design preview, so nothing was sent.</p>
-          <div className="cta-row"><Link className="btn" to="/shop">Keep shopping <span className="arr">→</span></Link><Link className="btn line" to="/services">Our services</Link></div>
+          <div className="eyebrow">{t('Request received')}</div>
+          <h1 className="caps">{t('Thank you, {name}.', { name: done.name })}</h1>
+          <p>{t('We have your {kind} request for {q} {bags}', { kind: t(done.kind), q: done.q, bags: t(done.q === 1 ? 'branded bag' : 'branded bags') })} ({t('reference')} <b>{done.ref}</b>). {t('We will reply within two working days with a quote and a sample plan.')}</p>
+          <p className="note">{t('This is a design preview, so nothing was sent.')}</p>
+          <div className="cta-row"><Link className="btn" to="/shop">{t('Keep shopping')} <span className="arr">→</span></Link><Link className="btn line" to="/services">{t('Our services')}</Link></div>
         </motion.div>
       </div>
     )
@@ -117,128 +119,128 @@ export default function Branded() {
 
   return (
     <>
-      <PageTitle eyebrow="Branded bags" a="Your name or logo," b="on our bags." lead="Choose a personal or corporate offer, tell us what you need, and we will send a quote." />
+      <PageTitle eyebrow={t('Branded bags')} a={t('Your name or logo,')} b={t('on our bags.')} lead={t('Choose a personal or corporate offer, tell us what you need, and we will send a quote.')} />
       <section className="sec wrap">
         <form className="book" onSubmit={submit} noValidate>
           <div className="book-main">
             <fieldset>
-              <legend>1 / Choose your offer</legend>
-              <div className="offers" role="radiogroup" aria-label="Offer">
+              <legend>{t('1 / Choose your offer')}</legend>
+              <div className="offers" role="radiogroup" aria-label={t('Offer')}>
                 {Object.entries(KINDS).map(([key, o]) => (
                   <button key={key} type="button" role="radio" aria-checked={kind === key} className={'offer' + (kind === key ? ' on' : '')} onClick={() => choose(key)}>
                     {key === 'personal' ? <Tote className="offer-illus" /> : <Backpack className="offer-illus" />}
-                    <b className="caps">{o.t}</b>
-                    <span>{o.d}</span>
-                    <ul>{o.points.map((p) => <li key={p}>{p}</li>)}</ul>
+                    <b className="caps">{t(o.t)}</b>
+                    <span>{t(o.d)}</span>
+                    <ul>{o.points.map((p) => <li key={p}>{t(p)}</li>)}</ul>
                   </button>
                 ))}
               </div>
             </fieldset>
 
             <fieldset>
-              <legend>2 / The bags</legend>
+              <legend>{t('2 / The bags')}</legend>
               <div className="pick">
-                <span className="bp-lbl">Collection</span>
-                <div className="colpick" role="radiogroup" aria-label="Collection">
+                <span className="bp-lbl">{t('Collection')}</span>
+                <div className="colpick" role="radiogroup" aria-label={t('Collection')}>
                   {COLS.map((c) => (
                     <button key={c.n} type="button" role="radio" aria-checked={col === c.n} className={col === c.n ? 'on' : ''} onClick={() => apply({ col: c.n })}>
                       <img src={img(c.sq || c.img)} alt="" style={{ objectPosition: c.sq ? undefined : c.pos }} />
                       <b>{c.n}</b>
-                      <small>{c.kind}</small>
+                      <small>{t(c.kind)}</small>
                     </button>
                   ))}
                 </div>
               </div>
               <div className="pick">
-                <span className="bp-lbl">Choose a bag from {col}</span>
-                <div className="stylepick" role="radiogroup" aria-label={`${col} bags`}>
+                <span className="bp-lbl">{t('Choose a bag from {col}', { col })}</span>
+                <div className="stylepick" role="radiogroup" aria-label={t('{col} bags', { col })}>
                   {styles.map((st) => (
                     <button key={st.id} type="button" role="radio" aria-checked={photo === st.id} className={photo === st.id ? 'on' : ''} onClick={() => apply({ photo: st.id })}>
                       <img src={img(st.src)} alt="" />
-                      <b>{st.name}</b>
+                      <b>{t(st.name)}</b>
                     </button>
                   ))}
                 </div>
               </div>
               {col === 'Kamo' && (
                 <div className="pick">
-                  <span className="bp-lbl">Kamo comes as</span>
-                  <div className="bp-seg" role="radiogroup" aria-label="Kamo type">
-                    {['Backpack', 'Laptop bag'].map((b) => <button key={b} type="button" role="radio" aria-checked={bag === b} className={bag === b ? 'on' : ''} onClick={() => apply({ bag: b })}>{b}</button>)}
+                  <span className="bp-lbl">{t('Kamo comes as')}</span>
+                  <div className="bp-seg" role="radiogroup" aria-label={t('Kamo type')}>
+                    {['Backpack', 'Laptop bag'].map((b) => <button key={b} type="button" role="radio" aria-checked={bag === b} className={bag === b ? 'on' : ''} onClick={() => apply({ bag: b })}>{t(b)}</button>)}
                   </div>
                 </div>
               )}
               <div className="grid2">
-                <Field id="qty" label={`How many? (${kind === 'personal' ? '1 to 9' : '10 or more'})`} type="number" min={k.min} value={form.qty} onChange={set('qty')} error={errors.qty} />
-                <Field id="by" label="Needed by (optional)" type="date" value={form.by} onChange={set('by')} />
+                <Field id="qty" label={t('How many? ({range})', { range: t(kind === 'personal' ? '1 to 9' : '10 or more') })} type="number" min={k.min} value={form.qty} onChange={set('qty')} error={errors.qty} />
+                <Field id="by" label={t('Needed by (optional)')} type="date" value={form.by} onChange={set('by')} />
               </div>
-              <Field id="text" label={kind === 'personal' ? 'Name, initials or message' : 'Logo or text to put on the bags'} value={form.text} onChange={set('text')} error={errors.text} placeholder={kind === 'personal' ? 'e.g. Aline U.' : 'e.g. Company name and logo'} />
+              <Field id="text" label={kind === 'personal' ? t('Name, initials or message') : t('Logo or text to put on the bags')} value={form.text} onChange={set('text')} error={errors.text} placeholder={kind === 'personal' ? t('e.g. Aline U.') : t('e.g. Company name and logo')} />
               <div className="cfg">
                 <div className="cfg-group">
-                  <span className="bp-lbl">Finish</span>
-                  <div className="bp-seg" role="radiogroup" aria-label="Finish">
-                    {[['embroidery', 'Embroidered'], ['print', 'Printed']].map(([k2, t]) => <button key={k2} type="button" role="radio" aria-checked={design.finish === k2} className={design.finish === k2 ? 'on' : ''} onClick={() => patch({ finish: k2 })}>{t}</button>)}
+                  <span className="bp-lbl">{t('Finish')}</span>
+                  <div className="bp-seg" role="radiogroup" aria-label={t('Finish')}>
+                    {[['embroidery', 'Embroidered'], ['print', 'Printed']].map(([k2, fl]) => <button key={k2} type="button" role="radio" aria-checked={design.finish === k2} className={design.finish === k2 ? 'on' : ''} onClick={() => patch({ finish: k2 })}>{t(fl)}</button>)}
                   </div>
                 </div>
                 <div className="cfg-group">
-                  <span className="bp-lbl">Lettering</span>
-                  <div className="bp-seg" role="radiogroup" aria-label="Lettering">
-                    {FONTS.map(([t, k2]) => <button key={k2} type="button" role="radio" aria-checked={design.font === k2} className={design.font === k2 ? 'on' : ''} onClick={() => patch({ font: k2 })}>{t}</button>)}
+                  <span className="bp-lbl">{t('Lettering')}</span>
+                  <div className="bp-seg" role="radiogroup" aria-label={t('Lettering')}>
+                    {FONTS.map(([fl, k2]) => <button key={k2} type="button" role="radio" aria-checked={design.font === k2} className={design.font === k2 ? 'on' : ''} onClick={() => patch({ font: k2 })}>{t(fl)}</button>)}
                   </div>
                 </div>
                 <div className="cfg-group">
-                  <span className="bp-lbl">Thread or ink colour</span>
-                  <div className="bp-sw" role="radiogroup" aria-label="Thread or ink colour">
-                    {COLOURS.map(([n, c]) => <button key={c} type="button" role="radio" aria-checked={design.colour === c} aria-label={n} title={n} className={design.colour === c ? 'on' : ''} style={{ background: c }} onClick={() => patch({ colour: c })} />)}
+                  <span className="bp-lbl">{t('Thread or ink colour')}</span>
+                  <div className="bp-sw" role="radiogroup" aria-label={t('Thread or ink colour')}>
+                    {COLOURS.map(([n, c]) => <button key={c} type="button" role="radio" aria-checked={design.colour === c} aria-label={t(n)} title={t(n)} className={design.colour === c ? 'on' : ''} style={{ background: c }} onClick={() => patch({ colour: c })} />)}
                   </div>
                 </div>
                 <div className="cfg-group">
-                  <span className="bp-lbl">{kind === 'corporate' ? 'Company logo' : 'Logo (optional)'}</span>
+                  <span className="bp-lbl">{kind === 'corporate' ? t('Company logo') : t('Logo (optional)')}</span>
                   <div className="bp-logo-row">
-                    <label className="btn line bp-up">{design.logo ? 'Change logo' : 'Upload logo'}<input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" onChange={upload} /></label>
-                    {design.logo && <button type="button" className="chip" onClick={() => patch({ logo: null })}>Remove</button>}
+                    <label className="btn line bp-up">{design.logo ? t('Change logo') : t('Upload logo')}<input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" onChange={upload} /></label>
+                    {design.logo && <button type="button" className="chip" onClick={() => patch({ logo: null })}>{t('Remove')}</button>}
                   </div>
                 </div>
               </div>
-              <Field id="colours" label="Notes on colours (optional)" value={form.colours} onChange={set('colours')} placeholder="e.g. navy thread with gold outline" />
-              {kind === 'corporate' && <p className="hint">After you send this, we will ask you to share your logo file by email or WhatsApp.</p>}
+              <Field id="colours" label={t('Notes on colours (optional)')} value={form.colours} onChange={set('colours')} placeholder={t('e.g. navy thread with gold outline')} />
+              {kind === 'corporate' && <p className="hint">{t('After you send this, we will ask you to share your logo file by email or WhatsApp.')}</p>}
             </fieldset>
 
             {!wide && (
               <fieldset>
-                <legend>3 / See it on the bag</legend>
+                <legend>{t('3 / See it on the bag')}</legend>
                 <BagPreview text={form.text} photoId={photo} design={design} onDesign={patch} />
               </fieldset>
             )}
 
             <fieldset>
-              <legend>{wide ? '3' : '4'} / Your details</legend>
+              <legend>{t(wide ? '3 / Your details' : '4 / Your details')}</legend>
               <div className="grid2">
-                <Field id="name" label="Full name" value={form.name} onChange={set('name')} error={errors.name} autoComplete="name" />
-                <Field id="phone" label="Mobile number" value={form.phone} onChange={set('phone')} error={errors.phone} autoComplete="tel" inputMode="tel" placeholder="0788 000 000" />
+                <Field id="name" label={t('Full name')} value={form.name} onChange={set('name')} error={errors.name} autoComplete="name" />
+                <Field id="phone" label={t('Mobile number')} value={form.phone} onChange={set('phone')} error={errors.phone} autoComplete="tel" inputMode="tel" placeholder="0788 000 000" />
               </div>
-              {kind === 'corporate' && <Field id="org" label="Company, school or organisation" value={form.org} onChange={set('org')} error={errors.org} autoComplete="organization" />}
-              <Field id="email" label="Email (optional)" type="email" value={form.email} onChange={set('email')} error={errors.email} autoComplete="email" />
-              <Field id="notes" label="Anything else we should know?" textarea rows={3} value={form.notes} onChange={set('notes')} />
+              {kind === 'corporate' && <Field id="org" label={t('Company, school or organisation')} value={form.org} onChange={set('org')} error={errors.org} autoComplete="organization" />}
+              <Field id="email" label={t('Email (optional)')} type="email" value={form.email} onChange={set('email')} error={errors.email} autoComplete="email" />
+              <Field id="notes" label={t('Anything else we should know?')} textarea rows={3} value={form.notes} onChange={set('notes')} />
             </fieldset>
 
-            <aside className="co-sum" aria-label="Request summary">
-            <h2 className="caps">Your request</h2>
+            <aside className="co-sum" aria-label={t('Request summary')}>
+            <h2 className="caps">{t('Your request')}</h2>
             <dl>
-              <div><dt>Offer</dt><dd>{k.t}</dd></div>
-              <div><dt>Bags</dt><dd>{form.qty || 0} × {bag}</dd></div>
-              <div><dt>Collection</dt><dd>{col}</dd></div>
-              <div><dt>Style</dt><dd>{styleOf(photo).name}</dd></div>
-              <div><dt>Branding</dt><dd>{form.text || 'Not entered yet'}</dd></div>
+              <div><dt>{t('Offer')}</dt><dd>{t(k.t)}</dd></div>
+              <div><dt>{t('Bags')}</dt><dd>{form.qty || 0} × {t(bag)}</dd></div>
+              <div><dt>{t('Collection')}</dt><dd>{col}</dd></div>
+              <div><dt>{t('Style')}</dt><dd>{t(styleOf(photo).name)}</dd></div>
+              <div><dt>{t('Branding')}</dt><dd>{form.text || t('Not entered yet')}</dd></div>
             </dl>
-            <button className="btn" type="submit" style={{ width: '100%', justifyContent: 'center' }}>Request a quote <span className="arr">→</span></button>
-            <p className="hint" style={{ textAlign: 'center' }}>We reply within two working days. Design preview: nothing is sent.</p>
+            <button className="btn" type="submit" style={{ width: '100%', justifyContent: 'center' }}>{t('Request a quote')} <span className="arr">→</span></button>
+            <p className="hint" style={{ textAlign: 'center' }}>{t('We reply within two working days.')} {t('Design preview: nothing is sent.')}</p>
             </aside>
           </div>
 
           {wide && (
           <div className="book-side">
-            <section className="bp-card" aria-label="See it on the bag">
+            <section className="bp-card" aria-label={t('See it on the bag')}>
               <BagPreview text={form.text} photoId={photo} design={design} onDesign={patch} />
             </section>
           </div>

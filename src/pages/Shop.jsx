@@ -5,6 +5,7 @@ import { ProductCard } from '../components/Sections'
 import { Tote } from '../components/Illus'
 import Select from '../components/Select'
 import { Link } from 'react-router-dom'
+import { useT } from '../i18n'
 import { CATS, COLS, PRODUCTS, img } from '../data/store'
 
 const PRICES = [
@@ -14,6 +15,7 @@ const PRICES = [
 ]
 
 export default function Shop() {
+  const t = useT()
   const [params, setParams] = useSearchParams()
   const [panel, setPanel] = useState(false)
   const q = params.get('q') || ''
@@ -31,9 +33,9 @@ export default function Shop() {
   const clear = () => setParams({}, { replace: true })
 
   const matches = (p, skip) => {
-    const t = q.trim().toLowerCase()
+    const s = q.trim().toLowerCase()
     return (
-      (!t || `${p.name} ${p.col} ${p.cat} ${p.d}`.toLowerCase().includes(t)) &&
+      (!s || `${p.name} ${p.col} ${p.cat} ${p.d}`.toLowerCase().includes(s)) &&
       (skip === 'cat' || cat === 'all' || p.cat === cat) &&
       (skip === 'col' || col === 'all' || p.col === col) &&
       (skip === 'price' || price === 'all' || PRICES.find((x) => x[0] === price)[2](p.price))
@@ -50,10 +52,10 @@ export default function Shop() {
   }, [q, cat, col, price, sort])
 
   const colInfo = COLS.find((c) => c.n === col)
-  const title = col !== 'all' ? col : cat !== 'all' ? cat : 'All products'
+  const title = t(col !== 'all' ? col : cat !== 'all' ? cat : 'All products')
   const active = [
-    q && ['q', `“${q}”`], cat !== 'all' && ['cat', cat], col !== 'all' && ['col', col],
-    price !== 'all' && ['price', PRICES.find((x) => x[0] === price)[1]],
+    q && ['q', `“${q}”`], cat !== 'all' && ['cat', t(cat)], col !== 'all' && ['col', t(col)],
+    price !== 'all' && ['price', t(PRICES.find((x) => x[0] === price)[1])],
   ].filter(Boolean)
 
   const Group = ({ label, children }) => (<div className="fgroup"><h3>{label}</h3>{children}</div>)
@@ -61,56 +63,56 @@ export default function Shop() {
   return (
     <>
       <section className="wrap shop-head">
-        <div className="eyebrow">The Zanda shop</div>
+        <div className="eyebrow">{t('The Zanda shop')}</div>
         <h1 className="caps">{title}</h1>
         <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-          <input id="q" type="search" placeholder="Search bags, collections, clothing" value={q} onChange={(e) => set('q', e.target.value)} aria-label="Search the shop" />
-          {q && <button type="button" aria-label="Clear search" onClick={() => set('q', '')}>×</button>}
+          <input id="q" type="search" placeholder={t('Search bags, collections, clothing')} value={q} onChange={(e) => set('q', e.target.value)} aria-label={t('Search the shop')} />
+          {q && <button type="button" aria-label={t('Clear search')} onClick={() => set('q', '')}>×</button>}
         </form>
       </section>
 
       <div className="wrap shop">
         <div className={'scrim' + (panel ? ' on' : '')} onClick={() => setPanel(false)} style={{ zIndex: 85 }} />
-        <aside className={'filters-side' + (panel ? ' on' : '')} aria-label="Filters">
-          <div className="fs-head"><h2 className="caps">Filters</h2><button className="ic" aria-label="Close filters" onClick={() => setPanel(false)}><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg></button></div>
-          <Group label="Category">
+        <aside className={'filters-side' + (panel ? ' on' : '')} aria-label={t('Filters')}>
+          <div className="fs-head"><h2 className="caps">{t('Filters')}</h2><button className="ic" aria-label={t('Close filters')} onClick={() => setPanel(false)}><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" /></svg></button></div>
+          <Group label={t('Category')}>
             {['all', ...CATS.map((c) => c.n)].map((c) => (
-              <label key={c} className="opt"><input type="radio" name="cat" checked={cat === c} onChange={() => set('cat', c)} /><span>{c === 'all' ? 'All categories' : c}</span>{c !== 'all' && <em>{count('cat', c)}</em>}</label>
+              <label key={c} className="opt"><input type="radio" name="cat" checked={cat === c} onChange={() => set('cat', c)} /><span>{t(c === 'all' ? 'All categories' : c)}</span>{c !== 'all' && <em>{count('cat', c)}</em>}</label>
             ))}
           </Group>
-          <Group label="Collection">
+          <Group label={t('Collection')}>
             {['all', ...COLS.map((c) => c.n)].map((c) => (
-              <label key={c} className="opt"><input type="radio" name="col" checked={col === c} onChange={() => set('col', c)} /><span>{c === 'all' ? 'All collections' : c}</span>{c !== 'all' && <em>{count('col', c)}</em>}</label>
+              <label key={c} className="opt"><input type="radio" name="col" checked={col === c} onChange={() => set('col', c)} /><span>{t(c === 'all' ? 'All collections' : c)}</span>{c !== 'all' && <em>{count('col', c)}</em>}</label>
             ))}
           </Group>
-          <Group label="Price">
-            {[['all', 'Any price'], ...PRICES].map(([k, t]) => (
-              <label key={k} className="opt"><input type="radio" name="price" checked={price === k} onChange={() => set('price', k)} /><span>{t}</span></label>
+          <Group label={t('Price')}>
+            {[['all', 'Any price'], ...PRICES].map(([k, lbl]) => (
+              <label key={k} className="opt"><input type="radio" name="price" checked={price === k} onChange={() => set('price', k)} /><span>{t(lbl)}</span></label>
             ))}
           </Group>
           <div className="fs-foot">
-            <button className="btn line" onClick={clear} disabled={!active.length && sort === 'feat'}>Clear all</button>
-            <button className="btn" onClick={() => setPanel(false)}>Show {list.length}</button>
+            <button className="btn line" onClick={clear} disabled={!active.length && sort === 'feat'}>{t('Clear all')}</button>
+            <button className="btn" onClick={() => setPanel(false)}>{t('Show {n}', { n: list.length })}</button>
           </div>
         </aside>
 
         <div className="shop-main">
           <div className="shop-bar">
-            <button className="btn line open-filters" onClick={() => setPanel(true)}>Filters{active.length ? ` (${active.length})` : ''}</button>
-            <p className="count" aria-live="polite">{list.length} {list.length === 1 ? 'product' : 'products'}</p>
-            <Select label="Sort" value={sort} onChange={(v) => set('sort', v)} options={[{ value: 'feat', label: 'Featured' }, { value: 'lo', label: 'Price, low to high' }, { value: 'hi', label: 'Price, high to low' }]} />
+            <button className="btn line open-filters" onClick={() => setPanel(true)}>{t('Filters')}{active.length ? ` (${active.length})` : ''}</button>
+            <p className="count" aria-live="polite">{list.length} {t(list.length === 1 ? 'product' : 'products')}</p>
+            <Select label={t('Sort')} value={sort} onChange={(v) => set('sort', v)} options={[{ value: 'feat', label: t('Featured') }, { value: 'lo', label: t('Price, low to high') }, { value: 'hi', label: t('Price, high to low') }]} />
           </div>
           {active.length > 0 && (
             <div className="active-filters">
-              {active.map(([k, t]) => <button key={k} className="chip on" onClick={() => set(k, '')}>{t} <span aria-hidden="true">×</span><span className="sr">remove</span></button>)}
-              <button className="chip" onClick={clear}>Clear all</button>
+              {active.map(([k, lbl]) => <button key={k} className="chip on" onClick={() => set(k, '')}>{lbl} <span aria-hidden="true">×</span><span className="sr">{t('remove')}</span></button>)}
+              <button className="chip" onClick={clear}>{t('Clear all')}</button>
             </div>
           )}
           {colInfo && (
             <motion.div key={colInfo.n} className="colbanner" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
               <img src={img(colInfo.sq || colInfo.img)} alt="" style={{ objectPosition: colInfo.sq ? undefined : colInfo.pos }} />
-              <div><div className="eyebrow">Collection</div><h3 className="caps">{colInfo.n}</h3><p>{colInfo.blurb}</p></div>
+              <div><div className="eyebrow">{t('Collection')}</div><h3 className="caps">{colInfo.n}</h3><p>{t(colInfo.blurb)}</p></div>
             </motion.div>
           )}
           <div className="pgrid shop-grid">
@@ -119,17 +121,17 @@ export default function Shop() {
           {list.length === 0 && (
             <div className="none">
               <Tote className="none-illus" />
-              <h2 className="caps">Nothing matches yet.</h2>
-              <p>Try a different word, or clear the filters.</p>
-              <button className="btn" onClick={clear}>Clear all filters</button>
+              <h2 className="caps">{t('Nothing matches yet.')}</h2>
+              <p>{t('Try a different word, or clear the filters.')}</p>
+              <button className="btn" onClick={clear}>{t('Clear all filters')}</button>
             </div>
           )}
           <div className="brand-banner">
             <Tote className="bb-illus" />
-            <div><div className="eyebrow">Branded bags</div><h3 className="caps">Want it with your name or logo?</h3><p>Choose a personal or a corporate offer and we will send you a quote.</p></div>
-            <Link className="btn" to="/branded">Request branded bags <span className="arr">→</span></Link>
+            <div><div className="eyebrow">{t('Branded bags')}</div><h3 className="caps">{t('Want it with your name or logo?')}</h3><p>{t('Choose a personal or a corporate offer and we will send you a quote.')}</p></div>
+            <Link className="btn" to="/branded">{t('Request branded bags')} <span className="arr">→</span></Link>
           </div>
-          <p className="note">Prices and descriptions are sample content for this design preview.</p>
+          <p className="note">{t('Prices and descriptions are sample content for this design preview.')}</p>
         </div>
       </div>
       <div style={{ height: 64 }} />

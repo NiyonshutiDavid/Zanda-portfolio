@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
 import { SLIDES, img } from '../data/store'
+import { useT } from '../i18n'
 
 const DUR = 6000
 const ease = [0.22, 0.8, 0.2, 1]
@@ -29,6 +30,7 @@ export function Line({ text, delay, reduce, small }) {
 }
 
 export default function Hero() {
+  const t = useT()
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduce = useReducedMotion()
@@ -45,15 +47,15 @@ export default function Hero() {
 
   useEffect(() => {
     if (paused) return
-    const t = setTimeout(() => go(i + 1), DUR)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => go(i + 1), DUR)
+    return () => clearTimeout(timer)
   }, [i, paused, reduce, go])
 
   return (
     <section
       className={'hero' + (s.light ? ' light' : '')}
       aria-roledescription="carousel"
-      aria-label="Featured collections"
+      aria-label={t('Featured collections')}
     >
       <div className="slides" aria-hidden="true">
         <AnimatePresence initial={false}>
@@ -85,40 +87,40 @@ export default function Hero() {
         <div className="hero-bottom">
           <div className="hero-text">
             <AnimatePresence mode="wait" initial>
-              <motion.div key={s.l1 + s.l2} className="hero-copy-block" exit={{ opacity: 0, y: -14, transition: { duration: 0.3 } }}>
+              <motion.div key={t(s.l1) + t(s.l2)} className="hero-copy-block" exit={{ opacity: 0, y: -14, transition: { duration: 0.3 } }}>
                 <motion.div className="eyebrow" style={{ color: 'var(--gold)' }} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, ease }}>
-                  {s.eyebrow}
+                  {t(s.eyebrow)}
                 </motion.div>
-                <h1 className="caps" style={{ '--fit': `calc(var(--avail) / ${(Math.max(s.l1.length, s.l2.length * (s.small2 ? 0.5 : 1)) * 0.66).toFixed(1)})` }} aria-label={`${s.l1} ${s.l2}`}>
-                  <Line text={s.l1} delay={0.05} reduce={reduce} />
-                  <Line text={s.l2} delay={0.05 + s.l1.length * 0.04 * 0.6} reduce={reduce} small={s.small2} />
+                <h1 className="caps" style={{ '--fit': `calc(var(--avail) / ${(Math.max(t(s.l1).length, t(s.l2).length * (s.small2 ? 0.5 : 1)) * 0.66).toFixed(1)})` }} aria-label={`${t(s.l1)} ${t(s.l2)}`}>
+                  <Line text={t(s.l1)} delay={0.05} reduce={reduce} />
+                  <Line text={t(s.l2)} delay={0.05 + t(s.l1).length * 0.04 * 0.6} reduce={reduce} small={s.small2} />
                 </h1>
               </motion.div>
             </AnimatePresence>
 
             <div className="cta-row">
               <button className="btn gold" onClick={() => nav(s.cta[1])}>
-                {s.cta[0]} <span className="arr">→</span>
+                {t(s.cta[0])} <span className="arr">→</span>
               </button>
               <button className="btn line" onClick={() => (s.cta2 ? nav(s.cta2[1]) : document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' }))}>
-                {s.cta2 ? s.cta2[0] : 'All collections'}
+                {s.cta2 ? t(s.cta2[0]) : t('All collections')}
               </button>
             </div>
 
-            <div className="pager" aria-label="Slide controls">
-              <button className="ic" aria-label="Previous slide" onClick={() => go(i - 1)}><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></svg></button>
-              <button className="ic" aria-label="Next slide" onClick={() => go(i + 1)}><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+            <div className="pager" aria-label={t('Slide controls')}>
+              <button className="ic" aria-label={t('Previous slide')} onClick={() => go(i - 1)}><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></svg></button>
+              <button className="ic" aria-label={t('Next slide')} onClick={() => go(i + 1)}><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
               <span className="count"><b>{pad(i + 1)}</b> / {pad(SLIDES.length)}</span>
             </div>
           </div>
 
-          <div className="rail" role="tablist" aria-label="Choose slide" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+          <div className="rail" role="tablist" aria-label={t('Choose slide')} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
             {SLIDES.map((x, k) => (
               <button
                 key={x.img}
                 role="tab"
                 aria-selected={k === i}
-                aria-label={`${x.l1} ${x.l2}`}
+                aria-label={`${t(x.l1)} ${t(x.l2)}`}
                 className={'th' + (k === i ? ' on' : '')}
                 onClick={() => go(k)}
               >

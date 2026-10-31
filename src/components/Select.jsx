@@ -1,8 +1,10 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useT } from '../i18n'
 
 // A designed dropdown that replaces the browser's default select.
 export default function Select({ label, value, options, onChange }) {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [hot, setHot] = useState(0)
   const ref = useRef(null)
@@ -30,9 +32,9 @@ export default function Select({ label, value, options, onChange }) {
 
   return (
     <div className="dsel" ref={ref} onKeyDown={onKey}>
-      {label && <span className="dsel-label" id={id}>{label}</span>}
+      {label && <span className="dsel-label" id={id}>{t(label)}</span>}
       <button type="button" className={'dsel-btn' + (open ? ' open' : '')} aria-haspopup="listbox" aria-expanded={open} aria-labelledby={label ? id : undefined} onClick={() => { setHot(options.indexOf(cur)); setOpen((o) => !o) }}>
-        <span>{cur.label}</span>
+        <span>{t(cur.label)}</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
       </button>
       <AnimatePresence>
@@ -40,7 +42,7 @@ export default function Select({ label, value, options, onChange }) {
           <motion.ul className="dsel-list" role="listbox" tabIndex={-1} initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 0.8, 0.2, 1] }}>
             {options.map((o, i) => (
               <li key={o.value} role="option" aria-selected={o.value === value} className={(o.value === value ? 'sel ' : '') + (i === hot ? 'hot' : '')} onMouseEnter={() => setHot(i)} onClick={() => pick(o)}>
-                <span>{o.label}</span>
+                <span>{t(o.label)}</span>
                 {o.value === value && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>}
               </li>
             ))}

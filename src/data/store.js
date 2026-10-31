@@ -120,3 +120,35 @@ export const STORIES = [
   { kind: 'After graduation', title: 'Support that does not stop', text: 'Graduates can count on business incubation, mentors from the programme network and continued learning. Finishing the course is where support continues, not where it ends.', img: 'pressing-seams.jpg' },
   { kind: 'Coming soon', title: 'Graduate stories', text: 'As each cohort graduates, their own words and photos will appear here, shared with their consent.', img: null },
 ]
+
+// Taken from the programmes kept in the Zanda dashboard (Content > Programs). Applications open only when staff open an intake.
+export const PROGRAMS = [
+  {
+    id: 'learn-and-earn',
+    name: 'Learn-and-Earn Empowerment Programme',
+    duration: '6 months',
+    who: 'Girls and women aged 15 to 24, starting in Gasabo District, Kigali',
+    summary: 'Tailoring, digital skills and entrepreneurship, with paid work on real customer orders from the start.',
+    points: ['Vocational tailoring', 'Digital skills', 'Entrepreneurship', 'Paid work on real orders'],
+    status: 'Applications closed for now',
+  },
+  {
+    id: 'zero-abandonment',
+    name: 'Zero Abandonment Support',
+    duration: 'After graduation',
+    who: 'Graduates of the Learn-and-Earn programme',
+    summary: 'Support that continues after graduation: business incubation, mentorship and continued learning.',
+    points: ['Business incubation', 'Mentorship network', 'Zanda Digital Platform'],
+    status: 'Open to every graduate',
+  },
+]
+
+// Partner names and logos are added here once partners agree to be listed: { n: 'Name', type: 'School', logo: 'file.png', url: 'https://...' }.
+export const PARTNERS = []
+
+export const PARTNER_WAYS = [
+  ['Schools', 'Order uniforms and school bags, made by trainees to your design.'],
+  ['Companies', 'Branded bags and corporate clothing, with your logo, for your team or clients.'],
+  ['Donors and foundations', 'Fund trainee places, sewing machines and the dedicated workshop.'],
+  ['Mentors and professionals', 'Share your skills with trainees and graduates starting their own businesses.'],
+]

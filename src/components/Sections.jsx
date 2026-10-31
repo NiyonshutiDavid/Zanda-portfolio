@@ -4,36 +4,40 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useCart } from '../context/CartContext'
 import { CATS, COLS, FAQ, PRODUCTS, fmt, img } from '../data/store'
 import { Reveal } from './Reveal'
+import { useT } from '../i18n'
 
 export function ProductCard({ p, i = 0 }) {
+  const t = useT()
   const { add } = useCart()
   return (
     <motion.div className="pc" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: Math.min(i, 8) * 0.05, ease: [0.22, 0.8, 0.2, 1] }}>
       <div className="im">
         <span className="col-tag">{p.col}</span>
-        <Link className="hit" to={`/product/${p.id}`} aria-label={`View ${p.name}`}>
-          <img src={img(p.imgs[0])} alt={p.name} loading="lazy" />
+        <Link className="hit" to={`/product/${p.id}`} aria-label={t('View {name}', { name: t(p.name) })}>
+          <img src={img(p.imgs[0])} alt={t(p.name)} loading="lazy" />
           {p.imgs[1] && <img src={img(p.imgs[1])} alt="" loading="lazy" />}
         </Link>
-        <span className="price-tag" aria-label={`Price ${fmt(p.price)}`}>{p.price.toLocaleString('en-US')}<small>RWF</small></span>
-        <button className="add" aria-label={`Add ${p.name} to your bag`} onClick={() => add(p.id)}><span>Quick add</span></button>
+        <span className="price-tag" aria-label={t('Price {price}', { price: fmt(p.price) })}>{p.price.toLocaleString('en-US')}<small>RWF</small></span>
+        <button className="add" aria-label={t('Add {name} to your bag', { name: t(p.name) })} onClick={() => add(p.id)}><span>{t('Quick add')}</span></button>
       </div>
       <div>
-        <h4>{p.name}</h4>
-        <div className="meta"><span>{p.cat}</span></div>
+        <h4>{t(p.name)}</h4>
+        <div className="meta"><span>{t(p.cat)}</span></div>
       </div>
     </motion.div>
   )
 }
 
 export function Marquee({ words = ['Tote bags', 'Backpacks', 'Laptop bags', 'Tailoring', 'School uniforms', 'Corporate clothing', 'Custom orders', 'Lumina', 'Kamo', 'MwanaGo'] }) {
+  const t = useT()
   const row = (
-    <span>{words.map((w) => <span key={w} style={{ display: 'contents' }}>{w}<i /></span>)}</span>
+    <span>{words.map((w) => <span key={w} style={{ display: 'contents' }}>{t(w)}<i /></span>)}</span>
   )
   return <div className="mq" aria-hidden="true"><div className="mq-track">{row}{row}</div></div>
 }
 
 export function Categories() {
+  const t = useT()
   const nav = useNavigate()
   return (
     <div className="cats">
@@ -41,12 +45,12 @@ export function Categories() {
         <Reveal key={c.n} delay={i * 0.08}>
           <button className="cat" onClick={() => nav(`/shop?cat=${c.n}`)}>
             <img src={img(c.img)} alt="" loading="lazy" style={{ objectPosition: c.pos }} />
-            <span className="tag">{c.tag}</span>
+            <span className="tag">{t(c.tag)}</span>
             <span className="row">
               <span>
                 <span className="idx" style={{ color: 'var(--gold)' }}>00{i + 1}/</span>
-                <h3 className="caps">{c.n}</h3>
-                <span style={{ fontSize: 14, opacity: 0.85 }}>{PRODUCTS.filter((p) => p.cat === c.n).length} styles</span>
+                <h3 className="caps">{t(c.n)}</h3>
+                <span style={{ fontSize: 14, opacity: 0.85 }}>{t('{n} styles', { n: PRODUCTS.filter((p) => p.cat === c.n).length })}</span>
               </span>
               <span className="go"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 17L17 7M8 7h9v9" /></svg></span>
             </span>
@@ -58,6 +62,7 @@ export function Categories() {
 }
 
 export function Collections() {
+  const t = useT()
   const [on, setOn] = useState(0)
   const nav = useNavigate()
   return (
@@ -77,9 +82,9 @@ export function Collections() {
           <span className="n idx" style={{ color: 'var(--gold)' }}>00{i + 1}/</span>
           <h3 className="caps">{c.n}</h3>
           <div className="info">
-            <span className="kind">{c.kind}</span>
-            <p>{c.blurb}</p>
-            <button className="chip" onClick={(e) => { e.stopPropagation(); nav(`/shop?col=${c.n}`) }}>Shop {c.n} →</button>
+            <span className="kind">{t(c.kind)}</span>
+            <p>{t(c.blurb)}</p>
+            <button className="chip" onClick={(e) => { e.stopPropagation(); nav(`/shop?col=${c.n}`) }}>{t('Shop {name}', { name: c.n })} →</button>
           </div>
         </div>
       ))}
@@ -88,15 +93,16 @@ export function Collections() {
 }
 
 export function Faq() {
+  const t = useT()
   const [open, setOpen] = useState(0)
   return (
     <div className="faq">
       {FAQ.map(([q, a], i) => (
         <div key={q} className={'q' + (open === i ? ' on' : '')}>
           <button aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
-            <span className="idx">00{i + 1}</span><h3>{q}</h3><span className="pl">+</span>
+            <span className="idx">00{i + 1}</span><h3>{t(q)}</h3><span className="pl">+</span>
           </button>
-          <div className="a"><div><p>{a}</p></div></div>
+          <div className="a"><div><p>{t(a)}</p></div></div>
         </div>
       ))}
     </div>
@@ -105,16 +111,17 @@ export function Faq() {
 
 // The four bag collections, reused on the About, Services and Training pages.
 export function CollectionsStrip() {
+  const t = useT()
   return (
     <div className="cstrip">
       {COLS.map((c, i) => (
         <Reveal key={c.n} delay={i * 0.07}>
           <Link className="ccard" to={`/shop?col=${c.n}`}>
             <span className="ccard-img"><img src={img(c.card || c.img)} alt="" loading="lazy" style={{ objectPosition: c.card ? undefined : c.pos }} /></span>
-            <span className="ccard-kind">{c.kind}</span>
+            <span className="ccard-kind">{t(c.kind)}</span>
             <h3 className="caps">{c.n}</h3>
-            <p>{c.blurb}</p>
-            <span className="ccard-go">Shop {c.n} <i aria-hidden="true">↗</i></span>
+            <p>{t(c.blurb)}</p>
+            <span className="ccard-go">{t('Shop {name}', { name: c.n })} <i aria-hidden="true">↗</i></span>
           </Link>
         </Reveal>
       ))}
@@ -125,6 +132,7 @@ export function CollectionsStrip() {
 // One row of products that drifts sideways on its own. It pauses while you hover, touch or tab through it,
 // and you can drag, swipe or use the arrows at any time. The set is repeated once so the loop never shows an end.
 export function MovingRow({ products, label = 'Featured products' }) {
+  const t = useT()
   const reduce = useReducedMotion()
   const box = useRef(null)
   const state = useRef({ hold: 0, hover: false })
@@ -172,14 +180,14 @@ export function MovingRow({ products, label = 'Featured products' }) {
   return (
     <div className="mrow-wrap">
       <div className="mrow-ctl">
-        <button className="ic" aria-label="Show earlier products" onClick={() => nudge(-1)}><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></svg></button>
-        <button className="ic" aria-label="Show more products" onClick={() => nudge(1)}><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+        <button className="ic" aria-label={t('Show earlier products')} onClick={() => nudge(-1)}><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></svg></button>
+        <button className="ic" aria-label={t('Show more products')} onClick={() => nudge(1)}><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
       </div>
       <div
         className="mrow"
         ref={box}
         role="region"
-        aria-label={label}
+        aria-label={t(label)}
         tabIndex={0}
         onMouseEnter={() => { state.current.hover = true }}
         onMouseLeave={() => { state.current.hover = false }}

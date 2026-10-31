@@ -1,8 +1,10 @@
 import { getTheme, setTheme } from '../lib/consent'
+import LangSwitch from './LangSwitch'
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCart } from '../context/CartContext'
+import { useT } from '../i18n'
 
 const LINKS = [
   ['Home', '/'],
@@ -20,6 +22,7 @@ const Icon = ({ d }) => (
 )
 
 export default function Header() {
+  const t = useT()
   const { pathname } = useLocation()
   const nav = useNavigate()
   const { count, setOpen } = useCart()
@@ -27,7 +30,7 @@ export default function Header() {
   const [dd, setDd] = useState(false)
   const [y, setY] = useState(0)
   const [dark, setDark] = useState(() => {
-    const t = getTheme(); if (t) return t === 'dark'
+    const saved = getTheme(); if (saved) return saved === 'dark'
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
   const overHero = (pathname === '/' || pathname === '/about') && y < window.innerHeight * 0.6
@@ -54,17 +57,17 @@ export default function Header() {
     <>
       <header className="top">
         <div className="wrap nav">
-          <Link className="logo" to="/" aria-label="Zanda Initiative home">
-            <img className="b" src={`${import.meta.env.BASE_URL}img/logo.png`} alt="Zanda Initiative" />
+          <Link className="logo" to="/" aria-label={t('Zanda Initiative home')}>
+            <img className="b" src={`${import.meta.env.BASE_URL}img/logo.png`} alt={t('Zanda Initiative')} />
             <img className="w" src={`${import.meta.env.BASE_URL}img/logo-white.png`} alt="" />
           </Link>
-          <nav className="links" aria-label="Main">
-            {LINKS.map(([t, to]) =>
+          <nav className="links" aria-label={t('Main')}>
+            {LINKS.map(([label, to]) =>
               to ? (
-                <NavLink key={t} to={to} end={to === '/'} className={({ isActive }) => (isActive ? 'active' : '')}>{t}</NavLink>
+                <NavLink key={label} to={to} end={to === '/'} className={({ isActive }) => (isActive ? 'active' : '')}>{t(label)}</NavLink>
               ) : (
                 <div
-                  key={t}
+                  key={label}
                   className={'dd' + (dd ? ' open' : '') + (NEWS_MENU.some(([, p]) => p === pathname) ? ' cur' : '')}
                   onMouseEnter={() => setDd(true)}
                   onMouseLeave={() => setDd(false)}
@@ -72,11 +75,11 @@ export default function Header() {
                   onKeyDown={(e) => e.key === 'Escape' && setDd(false)}
                 >
                   <button aria-haspopup="true" aria-expanded={dd} onClick={() => setDd((v) => !v)}>
-                    {t} <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                    {t(label)} <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
                   </button>
                   <div className="dd-panel" role="menu">
                     {NEWS_MENU.map(([n, path]) => (
-                      <Link key={n} to={path} role="menuitem" onClick={() => setDd(false)}>{n}</Link>
+                      <Link key={n} to={path} role="menuitem" onClick={() => setDd(false)}>{t(n)}</Link>
                     ))}
                   </div>
                 </div>
@@ -84,8 +87,9 @@ export default function Header() {
             )}
           </nav>
           <div className="tools">
-            <Link className="btn gold nav-donate" to="/donate">Donate</Link>
-            <button className="ic theme" aria-label={dark ? 'Dark mode is on. Switch to light mode' : 'Light mode is on. Switch to dark mode'} title={dark ? 'Dark mode' : 'Light mode'} aria-pressed={dark} onClick={() => setDark((d) => !d)}>
+            <LangSwitch className="in-bar" />
+            <Link className="btn gold nav-donate" to="/donate">{t('Donate')}</Link>
+            <button className="ic theme" aria-label={dark ? t('Dark mode is on. Switch to light mode') : t('Light mode is on. Switch to dark mode')} title={dark ? t('Dark mode') : t('Light mode')} aria-pressed={dark} onClick={() => setDark((d) => !d)}>
               <span key={dark ? 'moon' : 'sun'} className="theme-ic">
                 {dark ? (
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
@@ -94,11 +98,11 @@ export default function Header() {
                 )}
               </span>
             </button>
-            <button className="ic" aria-label="Open cart" onClick={() => setOpen(true)}>
+            <button className="ic" aria-label={t('Open cart')} onClick={() => setOpen(true)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11H6.2z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></svg>
               <motion.span key={count} className="badge" initial={{ scale: 1.6 }} animate={{ scale: 1 }}>{count}</motion.span>
             </button>
-            <button className="ic burger" aria-label="Open menu" onClick={() => setMenu(true)}>
+            <button className="ic burger" aria-label={t('Open menu')} onClick={() => setMenu(true)}>
               <Icon d="M4 8h16M4 16h16" />
             </button>
           </div>
@@ -115,19 +119,20 @@ export default function Header() {
             transition={{ duration: 0.7, ease: [0.22, 0.8, 0.2, 1] }}
           >
             <div className="menu-top">
-              <img src={`${import.meta.env.BASE_URL}img/logo-white.png`} alt="Zanda Initiative" style={{ height: 36, width: 'auto' }} />
-              <button className="ic" aria-label="Close menu" onClick={() => setMenu(false)} style={{ color: '#F7F3EC', boxShadow: 'inset 0 0 0 1.5px rgba(247,243,236,.4)' }}>
+              <img src={`${import.meta.env.BASE_URL}img/logo-white.png`} alt={t('Zanda Initiative')} style={{ height: 36, width: 'auto' }} />
+              <button className="ic" aria-label={t('Close menu')} onClick={() => setMenu(false)} style={{ color: '#F7F3EC', boxShadow: 'inset 0 0 0 1.5px rgba(247,243,236,.4)' }}>
                 <Icon d="M5 5l14 14M19 5L5 19" />
               </button>
             </div>
             <div className="big">
-              {[['Home', '/'], ['Shop', '/shop'], ['Services', '/services'], ['Training', '/training'], ['News', '/news'], ['Events', '/events'], ['Gallery', '/gallery'], ['About', '/about'], ['Contact', '/contact'], ['Donate', '/donate']].map(([t, to], k) => (
-                <motion.button key={t} onClick={() => nav(to)} initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 + k * 0.05, duration: 0.7, ease: [0.22, 0.8, 0.2, 1] }}>
-                  <small>00{k + 1}</small>{t}
+              {[['Home', '/'], ['Shop', '/shop'], ['Services', '/services'], ['Training', '/training'], ['News', '/news'], ['Events', '/events'], ['Gallery', '/gallery'], ['About', '/about'], ['Contact', '/contact'], ['Donate', '/donate']].map(([label, to], k) => (
+                <motion.button key={label} onClick={() => nav(to)} initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 + k * 0.05, duration: 0.7, ease: [0.22, 0.8, 0.2, 1] }}>
+                  <small>00{k + 1}</small>{t(label)}
                 </motion.button>
               ))}
             </div>
-            <div className="quote" style={{ color: 'var(--gold)', fontSize: 20 }}>Her future, our focus.</div>
+            <LangSwitch className="in-menu" />
+            <div className="quote" style={{ color: 'var(--gold)', fontSize: 20 }}>{t('Her future, our focus.')}</div>
           </motion.div>
         )}
       </AnimatePresence>

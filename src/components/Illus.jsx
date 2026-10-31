@@ -1,7 +1,11 @@
+import { useT } from '../i18n'
+
 // Line illustrations in the Zanda palette. Stroke follows currentColor; fills use the brand tokens.
 const base = { viewBox: '0 0 200 200', fill: 'none', strokeWidth: 3.5, strokeLinecap: 'round', strokeLinejoin: 'round', role: 'img' }
 
 function Svg({ title, children, className = '', ...rest }) {
+  const t = useT()
+  title = t(title)
   return (
     <svg {...base} className={'illus ' + className} stroke="currentColor" aria-label={title} {...rest}>
       <title>{title}</title>

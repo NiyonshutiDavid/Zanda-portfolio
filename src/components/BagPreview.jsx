@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { img } from '../data/store'
 import { FONTS, PHOTOS } from './bagDesign'
+import { useT } from '../i18n'
 
 const MIN = 3, MAX = 14
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 
 // The picture only: the design is moved and resized directly on the bag. Everything else is set in the form.
 export default function BagPreview({ text, photoId, design, onDesign }) {
+  const t = useT()
   const photo = PHOTOS.find((p) => p.id === photoId)
   const { pos, size, colour, finish, font, logo } = design
   const F = FONTS.find((f) => f[1] === font)
@@ -20,7 +22,7 @@ export default function BagPreview({ text, photoId, design, onDesign }) {
 
   useEffect(() => { setZoom(1); setPan({ x: 0, y: 0 }) }, [photoId])
 
-  const shown = text.trim() || 'Your name'
+  const shown = text.trim() || t('Your name')
   const empty = !text.trim() && !logo
   // Long names shrink so they always stay on the bag.
   const eff = Math.min(size, 80 / (Math.max(6, shown.length) * 0.62))
@@ -112,13 +114,13 @@ export default function BagPreview({ text, photoId, design, onDesign }) {
       if (text.trim()) {
         ctx.font = `${F[4]} ${F[3]} ${eff * (W / 100)}px ${F[2]}`
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-        const t = F[5] ? text.toUpperCase() : text
+        const tx = F[5] ? text.toUpperCase() : text
         if (finish === 'embroidery') {
-          ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillText(t, 0, y - 1.5)
-          ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillText(t, 0, y + 1.5)
+          ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillText(tx, 0, y - 1.5)
+          ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillText(tx, 0, y + 1.5)
           ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 4; ctx.shadowOffsetY = 2
         } else if (!photo.dark && dark(colour)) ctx.globalCompositeOperation = 'multiply'
-        ctx.fillStyle = colour; ctx.fillText(t, 0, y)
+        ctx.fillStyle = colour; ctx.fillText(tx, 0, y)
       }
       ctx.restore()
       const a = document.createElement('a')
@@ -132,14 +134,14 @@ export default function BagPreview({ text, photoId, design, onDesign }) {
     <div className="bp bp-only">
       <div className={'bp-stage' + (zoom > 1 ? ' zoomed' : '')} ref={stage} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onDoubleClick={dbl}>
         <div className="bp-zl" ref={layer} style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}>
-          <img src={img(photo.src)} alt={photo.label} draggable={false} />
+          <img src={img(photo.src)} alt={t(photo.label)} draggable={false} />
           <div
             ref={item}
             className={'bp-item ' + finish + (empty ? ' ghost' : '') + (!photo.dark && finish === 'print' && dark(colour) ? ' mult' : '')}
             style={{ left: `${pos.x}%`, top: `${pos.y}%`, '--c': colour, '--sz': eff, '--ff': F[2], '--fw': F[3], '--fs': F[4], textTransform: F[5] ? 'uppercase' : 'none', transform: 'translate(-50%,-50%)' }}
             tabIndex={0}
             role="group"
-            aria-label="Your design on the bag. Drag to move it, drag the corner to resize. Arrow keys move it, plus and minus resize it."
+            aria-label={t('Your design on the bag. Drag to move it, drag the corner to resize. Arrow keys move it, plus and minus resize it.')}
             onKeyDown={key}
           >
             {logo && <img className="bp-logo" src={logo} alt="" draggable={false} style={{ width: `calc(${size * 5} * 1cqw)` }} />}
@@ -147,14 +149,14 @@ export default function BagPreview({ text, photoId, design, onDesign }) {
             <span className="bp-handle" aria-hidden="true" />
           </div>
         </div>
-        <div className="bp-zoom-ctl" role="group" aria-label="Zoom">
-          <button type="button" aria-label="Zoom out" disabled={zoom <= 1} onClick={() => zoomTo(zoom - 0.4)}>−</button>
-          <button type="button" className="lvl" aria-label="Reset zoom" disabled={zoom === 1} onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }) }}>{zoom.toFixed(1)}×</button>
-          <button type="button" aria-label="Zoom in" disabled={zoom >= 3} onClick={() => zoomTo(zoom + 0.4)}>+</button>
+        <div className="bp-zoom-ctl" role="group" aria-label={t('Zoom')}>
+          <button type="button" aria-label={t('Zoom out')} disabled={zoom <= 1} onClick={() => zoomTo(zoom - 0.4)}>−</button>
+          <button type="button" className="lvl" aria-label={t('Reset zoom')} disabled={zoom === 1} onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }) }}>{zoom.toFixed(1)}×</button>
+          <button type="button" aria-label={t('Zoom in')} disabled={zoom >= 3} onClick={() => zoomTo(zoom + 0.4)}>+</button>
         </div>
-        <button type="button" className="bp-save" onClick={save} disabled={busy} aria-label="Save preview as an image">{busy ? 'Saving' : 'Save image'} <i aria-hidden="true">↓</i></button>
+        <button type="button" className="bp-save" onClick={save} disabled={busy} aria-label={t('Save preview as an image')}>{busy ? t('Saving') : t('Save image')} <i aria-hidden="true">↓</i></button>
       </div>
-      <p className="bp-cap">Drag to move. Drag the corner to resize.</p>
+      <p className="bp-cap">{t('Drag to move. Drag the corner to resize.')}</p>
     </div>
   )
 }

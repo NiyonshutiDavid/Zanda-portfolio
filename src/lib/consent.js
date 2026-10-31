@@ -2,6 +2,7 @@
 const KEY = 'zanda-consent'
 const SHIP = 'zanda-shipping'
 const THEME = 'zanda-theme'
+const LANG = 'zanda-lang'
 
 export const read = () => {
   try { return JSON.parse(localStorage.getItem(KEY)) } catch { return null }
@@ -13,7 +14,7 @@ export function save(choice) {
   try {
     localStorage.setItem(KEY, JSON.stringify(c))
     if (!c.details) localStorage.removeItem(SHIP)
-    if (!c.prefs) localStorage.removeItem(THEME)
+    if (!c.prefs) { localStorage.removeItem(THEME); localStorage.removeItem(LANG) }
   } catch { /* storage blocked */ }
   window.dispatchEvent(new Event('zanda:consent'))
   return c
@@ -38,9 +39,17 @@ export function setTheme(t) {
     if (allowed('prefs')) localStorage.setItem(THEME, t)
   } catch { /* storage blocked */ }
 }
+export function setLang(l) {
+  try {
+    if (allowed('prefs')) localStorage.setItem(LANG, l)
+  } catch { /* storage blocked */ }
+}
+export function getLang() {
+  try { return allowed('prefs') ? localStorage.getItem(LANG) : null } catch { return null }
+}
 export function getTheme() {
   try { return allowed('prefs') ? localStorage.getItem(THEME) : null } catch { return null }
 }
 
 // Anything left from before the visitor made a choice is cleared.
-if (!read()) { try { localStorage.removeItem(THEME); localStorage.removeItem(SHIP) } catch { /* storage blocked */ } }
+if (!read()) { try { localStorage.removeItem(THEME); localStorage.removeItem(LANG); localStorage.removeItem(SHIP) } catch { /* storage blocked */ } }
