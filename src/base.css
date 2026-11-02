@@ -2,7 +2,7 @@
 :root{
   --bg:#F7F3EC; --bg2:#EFE8DB; --fg:#0E2F2A; --muted:#566660; --line:rgba(14,47,42,.16);
   --band:#134E46; --band-deep:#07332C; --band-fg:#F7F3EC; --gold:#BCA879; --accent:#B06A26; --blush:#F4E1D2; --card:#FFFFFF;
-  --f-display:"Futura","Jost","Century Gothic",sans-serif; --f-body:"Manrope",system-ui,sans-serif; --f-quote:"Fraunces",Georgia,serif;
+  --f-display:"Jost Variable",ui-sans-serif,system-ui,sans-serif; --f-body:"Manrope Variable",ui-sans-serif,system-ui,sans-serif; --f-quote:"Fraunces Variable",Georgia,serif;
   --pad:clamp(16px,4.5vw,96px);
   --gut:max(16px,env(safe-area-inset-left,0px)); --gutr:max(16px,env(safe-area-inset-right,0px));
   --pad-l:max(var(--pad),env(safe-area-inset-left,0px)); --pad-r:max(var(--pad),env(safe-area-inset-right,0px));

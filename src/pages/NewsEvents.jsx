@@ -5,8 +5,9 @@ import { Reveal } from '../components/Reveal'
 import { PageTitle } from './Services'
 import { Thread } from '../components/Illus'
 import Select from '../components/Select'
-import { NEWS, SERVICES, GALLERY, img } from '../data/store'
-import { useI18n, useT } from '../i18n'
+import { SERVICES, img } from '../data/store'
+import { useContent } from '../lib/content'
+import { LOCALE, useI18n, useT } from '../i18n'
 
 const RW_MONTHS = ['Mutarama', 'Gashyantare', 'Werurwe', 'Mata', 'Gicurasi', 'Kamena', 'Nyakanga', 'Kanama', 'Nzeri', 'Ukwakira', 'Ugushyingo', 'Ukuboza']
 // English dates come from the data as written; French and Kinyarwanda are formatted from the ISO date.
@@ -18,6 +19,7 @@ const niceDate = (n, lang) => {
 
 export function News() {
   const { t, lang } = useI18n()
+  const { NEWS } = useContent()
   const [open, setOpen] = useState(null)
   const [q, setQ] = useState('')
   const [tag, setTag0] = useState('All')
@@ -32,10 +34,10 @@ export function News() {
     const t = q.trim().toLowerCase()
     const l = NEWS.filter((n) => (tag === 'All' || n.tag === tag) && (!t || `${t(n.title)} ${t(n.summary)} ${t(n.body)}`.toLowerCase().includes(t)))
     return l.sort((a, b) => (sort === 'new' ? b.iso.localeCompare(a.iso) : a.iso.localeCompare(b.iso)))
-  }, [q, tag, sort, t])
+  }, [q, tag, sort, t, NEWS])
   return (
     <>
-      <PageTitle eyebrow="News" a="What is happening" b="at Zanda." lead="Updates from the workshop, the programme and the people in it." />
+      <PageTitle section="news.hero" eyebrow="News" a="What is happening" b="at Zanda." lead="Updates from the workshop, the programme and the people in it." />
       <section className="sec wrap">
         <div className="news-tools" ref={tools}>
           <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
@@ -78,11 +80,13 @@ export function News() {
 }
 
 export function Events() {
-  const t = useT()
+  const { t, lang } = useI18n()
+  const { EVENTS } = useContent()
+  const day = (e) => new Date(e.iso + 'T00:00:00Z').toLocaleDateString(LOCALE[lang], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) + (e.time ? ` · ${e.time}` : '')
   const visit = SERVICES.find((s) => s.id === 'workshop-visit')
   return (
     <>
-      <PageTitle eyebrow="Events" a="Come and see" b="the workshop." lead="Meet the trainees and see Learn-and-Earn at work." />
+      <PageTitle section="events.hero" eyebrow="Events" a="Come and see" b="the workshop." lead="Meet the trainees and see Learn-and-Earn at work." />
       <section className="sec wrap">
         <div className="evs">
           <Reveal className="ev">
@@ -92,12 +96,23 @@ export function Events() {
             <div className="svc-meta"><span className="chip on">{t(visit.mins)}</span><span className="chip">{t(visit.when)}</span></div>
             <Link className="btn" to="/book?service=workshop-visit">{t('Book a visit')} <span className="arr">→</span></Link>
           </Reveal>
-          <Reveal className="ev alt" delay={0.1}>
-            <div className="eyebrow" style={{ color: 'var(--gold)' }}>{t('Upcoming')}</div>
-            <h2 className="caps">{t('No public events announced yet.')}</h2>
-            <p>{t('When we schedule open days, launches or cohort graduations, they will be listed here.')}</p>
-            <Link className="btn gold" to="/contact">{t('Ask to be told')} <span className="arr">→</span></Link>
-          </Reveal>
+          {EVENTS.upcoming.map((e, i) => (
+            <Reveal className="ev alt" delay={0.1 + i * 0.06} key={e.slug}>
+              <div className="eyebrow" style={{ color: 'var(--gold)' }}>{t('Upcoming')} · {day(e)}</div>
+              <h2 className="caps">{e.title}</h2>
+              {e.location && <div className="svc-meta"><span className="chip">{e.location}</span></div>}
+              {e.summary && <p>{e.summary}</p>}
+              <Link className="btn gold" to="/contact">{t('Ask to be told')} <span className="arr">→</span></Link>
+            </Reveal>
+          ))}
+          {EVENTS.upcoming.length === 0 && (
+            <Reveal className="ev alt" delay={0.1}>
+              <div className="eyebrow" style={{ color: 'var(--gold)' }}>{t('Upcoming')}</div>
+              <h2 className="caps">{t('No public events announced yet.')}</h2>
+              <p>{t('When we schedule open days, launches or cohort graduations, they will be listed here.')}</p>
+              <Link className="btn gold" to="/contact">{t('Ask to be told')} <span className="arr">→</span></Link>
+            </Reveal>
+          )}
         </div>
       </section>
     </>
@@ -106,6 +121,8 @@ export function Events() {
 
 export function Gallery() {
   const t = useT()
+  const { GALLERY } = useContent()
+  const albums = ['All', ...new Set(GALLERY.map((g) => g[2]).filter(Boolean))]
   const [tag, setTag0] = useState('All')
   const [lb, setLb] = useState(null)
   const bar = useRef(null)
@@ -123,10 +140,10 @@ export function Gallery() {
 
   return (
     <>
-      <PageTitle eyebrow="Gallery" a="Inside the workshop," b="and out in the world." lead="Training, clothing and bags, all made in Kigali." />
+      <PageTitle section="gallery.hero" eyebrow="Gallery" a="Inside the workshop," b="and out in the world." lead="Training, clothing and bags, all made in Kigali." />
       <section className="sec wrap gal-bar" style={{ paddingBottom: 0 }} ref={bar}>
         <div className="topics" role="radiogroup" aria-label={t('Filter')}>
-          {['All', 'Training', 'Bags', 'Clothing'].map((c) => (
+          {albums.map((c) => (
             <button key={c} role="radio" aria-checked={tag === c} className={'chip' + (tag === c ? ' on' : '')} onClick={() => setTag(c)}>{t(c)}</button>
           ))}
           <span className="count" style={{ margin: '0 0 0 auto' }}>{list.length} {t('photos')}</span>

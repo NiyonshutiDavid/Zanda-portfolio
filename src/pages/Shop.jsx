@@ -6,7 +6,8 @@ import { Tote } from '../components/Illus'
 import Select from '../components/Select'
 import { Link } from 'react-router-dom'
 import { useT } from '../i18n'
-import { CATS, COLS, PRODUCTS, img } from '../data/store'
+import { img } from '../data/store'
+import { useContent } from '../lib/content'
 
 const PRICES = [
   ['lt', 'Under 40,000 RWF', (p) => p < 40000],
@@ -16,6 +17,7 @@ const PRICES = [
 
 export default function Shop() {
   const t = useT()
+  const { CATS, COLS, PRODUCTS } = useContent()
   const [params, setParams] = useSearchParams()
   const [panel, setPanel] = useState(false)
   const q = params.get('q') || ''
@@ -49,7 +51,7 @@ export default function Shop() {
     if (sort === 'hi') l = [...l].sort((a, b) => b.price - a.price)
     return l
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, cat, col, price, sort])
+  }, [q, cat, col, price, sort, PRODUCTS])
 
   const colInfo = COLS.find((c) => c.n === col)
   const title = t(col !== 'all' ? col : cat !== 'all' ? cat : 'All products')

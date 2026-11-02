@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { useCart } from '../context/CartContext'
-import { CATS, COLS, FAQ, PRODUCTS, fmt, img } from '../data/store'
+import { fmt, img } from '../data/store'
+import { useContent } from '../lib/content'
 import { Reveal } from './Reveal'
 import { useT } from '../i18n'
 
@@ -38,6 +39,7 @@ export function Marquee({ words = ['Tote bags', 'Backpacks', 'Laptop bags', 'Tai
 
 export function Categories() {
   const t = useT()
+  const { CATS, PRODUCTS } = useContent()
   const nav = useNavigate()
   return (
     <div className="cats">
@@ -63,6 +65,7 @@ export function Categories() {
 
 export function Collections() {
   const t = useT()
+  const { COLS } = useContent()
   const [on, setOn] = useState(0)
   const nav = useNavigate()
   return (
@@ -94,6 +97,7 @@ export function Collections() {
 
 export function Faq() {
   const t = useT()
+  const { FAQ } = useContent()
   const [open, setOpen] = useState(0)
   return (
     <div className="faq">
@@ -112,6 +116,7 @@ export function Faq() {
 // The four bag collections, reused on the About, Services and Training pages.
 export function CollectionsStrip() {
   const t = useT()
+  const { COLS } = useContent()
   return (
     <div className="cstrip">
       {COLS.map((c, i) => (

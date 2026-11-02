@@ -1,4 +1,7 @@
-export const img = (f) => `${import.meta.env.BASE_URL}img/${f}`
+import { isRemote, mediaUrl } from '../lib/api'
+
+// A file name in public/img, or (for content from the backend) an absolute URL or API path such as /uploads/x.jpg.
+export const img = (f) => (isRemote(f) ? mediaUrl(f) : `${import.meta.env.BASE_URL}img/${f}`)
 export const fmt = (n) => `${n.toLocaleString('en-US')} RWF`
 
 export const CATS = [

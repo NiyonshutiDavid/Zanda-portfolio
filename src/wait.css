@@ -1,0 +1,3 @@
+/* Titles are drawn once the saved wording is known (see ready in src/lib/content.jsx), so a heading never changes in front of the visitor. */
+.about-hero .wrap,.hero .hero-in,.hero .slides{transition:opacity .35s ease}
+.about-hero[data-wait='true'] .wrap,.hero[data-wait='true'] .hero-in,.hero[data-wait='true'] .slides{opacity:0}

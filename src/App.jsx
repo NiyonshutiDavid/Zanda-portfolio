@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { CartProvider } from './context/CartContext'
+import { ContentProvider } from './lib/content'
+import './wait.css'
 import Header from './components/Header'
 import { CartDrawer, Footer } from './components/Chrome'
 import Cookies from './components/Cookies'
@@ -47,6 +49,7 @@ export default function App() {
     prev.current = { path: location.pathname, search: location.search }
   }, [location.pathname, location.search])
   return (
+    <ContentProvider>
     <CartProvider>
       <div className="shell">
       <Header />
@@ -78,5 +81,6 @@ export default function App() {
       <Cursor />
       <Curtain pathname={location.pathname} />
     </CartProvider>
+    </ContentProvider>
   )
 }

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Reveal } from '../components/Reveal'
 import { PageTitle } from './Services'
-import { MODULES, OUTCOMES, PROGRAMS } from '../data/store'
+import { useContent } from '../lib/content'
 import Impact from '../components/Impact'
 import { useT } from '../i18n'
 
@@ -13,9 +13,10 @@ const AFTER = [
 
 export default function Training() {
   const t = useT()
+  const { MODULES, OUTCOMES, PROGRAMS } = useContent()
   return (
     <>
-      <PageTitle eyebrow="Training" a="Six months to" b="a trade and an income." lead="The Learn-and-Earn Empowerment Programme takes young women from basic stitching to making bags, school uniforms and corporate clothing." />
+      <PageTitle section="programs.hero" eyebrow="Training" a="Six months to" b="a trade and an income." lead="The Learn-and-Earn Empowerment Programme takes young women from basic stitching to making bags, school uniforms and corporate clothing." />
 
       <section className="sec wrap">
         <div className="train-facts">
@@ -30,12 +31,12 @@ export default function Training() {
         <div className="progs">
           {PROGRAMS.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.08} className="prog">
-              <div className="prog-top"><span className="prog-dur">{t(p.duration)}</span><span className={'prog-st' + (i === 0 ? ' closed' : '')}>{t(p.status)}</span></div>
+              <div className="prog-top"><span className="prog-dur">{t(p.duration)}</span><span className={'prog-st' + ((p.open === undefined ? i === 0 : !p.open) ? ' closed' : '')}>{t(p.status)}</span></div>
               <h3 className="caps">{t(p.name)}</h3>
               <p>{t(p.summary)}</p>
               <dl><dt>{t('Who it is for')}</dt><dd>{t(p.who)}</dd></dl>
               <ul>{p.points.map((x) => <li key={x}>{t(x)}</li>)}</ul>
-              <Link className="btn line" to="/contact">{i === 0 ? t('Ask about the next intake') : t('Talk to us')} <span className="arr">→</span></Link>
+              <Link className="btn line" to="/contact">{(p.open === undefined ? i === 0 : !p.open) ? t('Ask about the next intake') : t('Talk to us')} <span className="arr">→</span></Link>
             </Reveal>
           ))}
         </div>

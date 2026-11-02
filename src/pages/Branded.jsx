@@ -6,7 +6,8 @@ import { Field, PHONE_RE, EMAIL_RE } from '../components/Field'
 import { Tote, Backpack } from '../components/Illus'
 import BagPreview from '../components/BagPreview'
 import { COLOURS, FONTS, PHOTOS, PRODUCT_STYLE, defaultColour } from '../components/bagDesign'
-import { COLS, PRODUCTS, img } from '../data/store'
+import { img } from '../data/store'
+import { useContent } from '../lib/content'
 import { useT } from '../i18n'
 
 const KINDS = {
@@ -48,6 +49,7 @@ function useWide() {
 
 export default function Branded() {
   const t = useT()
+  const { COLS, PRODUCTS } = useContent()
   const [params] = useSearchParams()
   const from = PRODUCTS.find((p) => p.id === params.get('bag'))
   const [kind, setKind] = useState('personal')

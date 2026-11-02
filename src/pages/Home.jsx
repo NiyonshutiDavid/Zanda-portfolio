@@ -3,7 +3,7 @@ import Hero from '../components/Hero'
 import { Reveal, Counter } from '../components/Reveal'
 import { ScrollWords, Swap } from '../components/TextFx'
 import { Categories, Collections, Faq, Marquee, MovingRow } from '../components/Sections'
-import { FEATURED, PRODUCTS } from '../data/store'
+import { useContent } from '../lib/content'
 import Impact from '../components/Impact'
 import { useT } from '../i18n'
 import { Backpack, Dress, Heart, Scissors, SewingMachine, Tote } from '../components/Illus'
@@ -18,7 +18,8 @@ const STEPS = [
 export default function Home() {
   const t = useT()
   const nav = useNavigate()
-  const featured = FEATURED.map((id) => PRODUCTS.find((p) => p.id === id))
+  const { FEATURED, PRODUCTS } = useContent()
+  const featured = FEATURED.map((id) => PRODUCTS.find((p) => p.id === id)).filter(Boolean)
   return (
     <>
       <Hero />

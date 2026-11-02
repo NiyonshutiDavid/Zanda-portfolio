@@ -4,6 +4,7 @@ import { Reveal } from '../components/Reveal'
 import { SERVICES, MAKES, img } from '../data/store'
 import { Dress, Tote, Backpack, Scissors } from '../components/Illus'
 import { useT } from '../i18n'
+import { useContent, useHeading } from '../lib/content'
 
 const ease = [0.22, 0.8, 0.2, 1]
 const STEPS = [
@@ -13,18 +14,23 @@ const STEPS = [
   ['Deliver', 'We confirm a delivery date with you and bring it to your door.'],
 ]
 
-export function PageTitle({ eyebrow, a: a0, b: b0, lead: lead0 }) {
+// `section` is the dashboard's site-content section of this page (e.g. "news.hero"): what staff saved there replaces the built-in wording,
+// but only once it is known (see ready), so the title is drawn once and never switches.
+export function PageTitle({ eyebrow: eyebrow0, a: a0, b: b0, lead: lead0, section }) {
   const t = useT()
-  const a = t(a0), b = t(b0), lead = lead0 && t(lead0)
+  const { ready } = useContent()
+  const h = useHeading(section)
+  const eyebrow = h?.eyebrow ?? t(eyebrow0)
+  const a = h?.a ?? t(a0), b = h?.a !== undefined ? h.b : t(b0), lead = h?.lead ?? (lead0 && t(lead0))
   // Size the title so its longest line always fits the screen width.
   const fit = { '--fs': `min(128px, calc((100vw - 2 * var(--pad)) / ${(Math.max(a.length, b.length) * 0.66).toFixed(1)}))` }
   return (
-    <section className="about-hero band">
+    <section className="about-hero band" data-wait={!ready}>
       <div className="wrap">
-        <div className="eyebrow" style={{ marginBottom: 22 }}>{t(eyebrow)}</div>
+        <div className="eyebrow" style={{ marginBottom: 22 }}>{eyebrow}</div>
         <h1 className="caps ah-title" style={fit} aria-label={`${a} ${b}`}>
           <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, ease }}>{a}</motion.span></span>
-          <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1, ease }}>{b}</motion.span></span>
+          {b && <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1, ease }}>{b}</motion.span></span>}
         </h1>
         {lead && <motion.p className="ah-lead" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.8 }}>{lead}</motion.p>}
       </div>

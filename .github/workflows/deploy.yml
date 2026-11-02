@@ -27,6 +27,8 @@ jobs:
       - run: npm run build
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
+          # Where this copy reads its content from. Override with the repository variable ZANDA_API_URL.
+          VITE_API_URL: ${{ vars.ZANDA_API_URL || 'https://zandainitiative.org' }}
       # GitHub Pages has no server-side routing, so deep links fall back to the app itself.
       - run: cp dist/index.html dist/404.html && touch dist/.nojekyll
       - uses: actions/upload-pages-artifact@v3

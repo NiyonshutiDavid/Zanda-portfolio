@@ -21,9 +21,9 @@ export const COLOURS = [['Ivory', '#F7F3EC'], ['Gold', '#BCA879'], ['Navy', '#14
 
 // [label, key, css family, weight, style, uppercase]
 export const FONTS = [
-  ['Caps', 'display', '"Jost", "Century Gothic", sans-serif', 500, 'normal', true],
-  ['Script', 'serif', '"Fraunces", Georgia, serif', 400, 'italic', false],
-  ['Bold', 'body', '"Manrope", system-ui, sans-serif', 800, 'normal', false],
+  ['Caps', 'display', '"Jost Variable", ui-sans-serif, sans-serif', 500, 'normal', true],
+  ['Script', 'serif', '"Fraunces Variable", Georgia, serif', 400, 'italic', false],
+  ['Bold', 'body', '"Manrope Variable", ui-sans-serif, sans-serif', 800, 'normal', false],
 ]
 
 // Ivory on dark bags and navy on light bags, unless the visitor chose another colour.

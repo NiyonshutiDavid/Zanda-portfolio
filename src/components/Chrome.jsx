@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCart } from '../context/CartContext'
-import { fmt, img, COLS } from '../data/store'
+import { fmt, img } from '../data/store'
+import { useContent } from '../lib/content'
 import { Tote } from './Illus'
 import { useT } from '../i18n'
 
@@ -46,6 +47,7 @@ export function CartDrawer() {
 }
 
 export function Footer() {
+  const { COLS } = useContent()
   const t = useT()
   const nav = useNavigate()
   const [email, setEmail] = useState('')

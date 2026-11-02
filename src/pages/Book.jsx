@@ -82,7 +82,7 @@ export default function Book() {
 
   return (
     <>
-      <PageTitle eyebrow={t('Book')} a={t('Book a fitting,')} b={t('a visit or a session.')} lead={t('Pick a service, then a day and a time that suit you.')} />
+      <PageTitle section="book.hero" eyebrow={t('Book')} a={t('Book a fitting,')} b={t('a visit or a session.')} lead={t('Pick a service, then a day and a time that suit you.')} />
       <section className="sec wrap">
         <form className="book" onSubmit={submit} noValidate>
           <div className="book-main">

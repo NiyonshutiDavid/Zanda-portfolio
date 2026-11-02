@@ -5,7 +5,8 @@ import { Reveal, Counter } from '../components/Reveal'
 import { Marquee } from '../components/Sections'
 import { Line } from '../components/Hero'
 import { ScrollWords, Mark } from '../components/TextFx'
-import { PARTNERS, PARTNER_WAYS, TEAM, img } from '../data/store'
+import { PARTNER_WAYS, img } from '../data/store'
+import { useContent } from '../lib/content'
 import { useT } from '../i18n'
 
 const ease = [0.22, 0.8, 0.2, 1]
@@ -32,6 +33,7 @@ function TitleLine({ text, delay }) {
 }
 
 export default function About() {
+  const { PARTNERS, TEAM } = useContent()
   const t = useT()
   const ref = useRef(null)
   const reduce = useReducedMotion()

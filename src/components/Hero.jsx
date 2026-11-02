@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
-import { SLIDES, img } from '../data/store'
+import { img } from '../data/store'
+import { useContent } from '../lib/content'
 import { useT } from '../i18n'
 
 const DUR = 6000
@@ -31,13 +32,16 @@ export function Line({ text, delay, reduce, small }) {
 
 export default function Hero() {
   const t = useT()
+  const { SLIDES, ready } = useContent()
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduce = useReducedMotion()
   const nav = useNavigate()
-  const s = SLIDES[i]
+  const s = SLIDES[i] || SLIDES[0]
+  // Buttons can point to a page of this site or, for slides saved in the dashboard, to a full https address.
+  const open = (href) => (/^https?:/i.test(href) ? window.location.assign(href) : nav(href))
 
-  const go = useCallback((n) => setI((n + SLIDES.length) % SLIDES.length), [])
+  const go = useCallback((n) => setI((n + SLIDES.length) % SLIDES.length), [SLIDES.length])
 
   // Light photos need dark text, and the header over the hero follows the slide.
   useEffect(() => {
@@ -56,6 +60,7 @@ export default function Hero() {
       className={'hero' + (s.light ? ' light' : '')}
       aria-roledescription="carousel"
       aria-label={t('Featured collections')}
+      data-wait={!ready}
     >
       <div className="slides" aria-hidden="true">
         <AnimatePresence initial={false}>
@@ -99,10 +104,10 @@ export default function Hero() {
             </AnimatePresence>
 
             <div className="cta-row">
-              <button className="btn gold" onClick={() => nav(s.cta[1])}>
+              <button className="btn gold" onClick={() => open(s.cta[1])}>
                 {t(s.cta[0])} <span className="arr">→</span>
               </button>
-              <button className="btn line" onClick={() => (s.cta2 ? nav(s.cta2[1]) : document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' }))}>
+              <button className="btn line" onClick={() => (s.cta2 ? open(s.cta2[1]) : document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' }))}>
                 {s.cta2 ? t(s.cta2[0]) : t('All collections')}
               </button>
             </div>
@@ -117,7 +122,7 @@ export default function Hero() {
           <div className="rail" role="tablist" aria-label={t('Choose slide')} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
             {SLIDES.map((x, k) => (
               <button
-                key={x.img}
+                key={k + x.img}
                 role="tab"
                 aria-selected={k === i}
                 aria-label={`${t(x.l1)} ${t(x.l2)}`}

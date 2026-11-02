@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCart } from '../context/CartContext'
 import { ProductCard } from '../components/Sections'
-import { PRODUCTS, fmt, img } from '../data/store'
+import { fmt, img } from '../data/store'
+import { useContent, useProduct } from '../lib/content'
 import { Reveal } from '../components/Reveal'
 import { useT } from '../i18n'
 
@@ -12,7 +13,8 @@ export default function Product() {
   const { id } = useParams()
   const nav = useNavigate()
   const { add, setOpen } = useCart()
-  const p = PRODUCTS.find((x) => x.id === id)
+  const { PRODUCTS } = useContent()
+  const p = useProduct(id)
   const [cur, setCur] = useState(0)
   const [q, setQ] = useState(1)
   const [zoom, setZoom] = useState(false)

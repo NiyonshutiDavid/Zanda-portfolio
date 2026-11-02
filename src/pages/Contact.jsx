@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { Reveal } from '../components/Reveal'
 import { Faq } from '../components/Sections'
 import { Field, EMAIL_RE } from '../components/Field'
+import { PageTitle } from './Services'
 import { useT } from '../i18n'
 
 const ease = [0.22, 0.8, 0.2, 1]
@@ -36,15 +37,7 @@ export default function Contact() {
 
   return (
     <>
-      <section className="about-hero band">
-        <div className="wrap">
-          <div className="eyebrow" style={{ marginBottom: 22 }}>{t('Contact us')}</div>
-          <h1 className="caps ah-title" aria-label={t("Let's talk about her future.")}>
-            <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, ease }}>{t("Let's talk about")}</motion.span></span>
-            <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1, ease }}>{t('her future.')}</motion.span></span>
-          </h1>
-        </div>
-      </section>
+      <PageTitle section="contact.hero" eyebrow="Contact us" a="Let's talk about" b="her future." />
 
       <section className="sec wrap">
         <div className="contact">

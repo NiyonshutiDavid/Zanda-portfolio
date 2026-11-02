@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { Reveal } from '../components/Reveal'
 import { Field, PHONE_RE, EMAIL_RE } from '../components/Field'
 import { fmt, img } from '../data/store'
+import { PageTitle } from './Services'
 import { useT } from '../i18n'
 
 const ease = [0.22, 0.8, 0.2, 1]
@@ -60,18 +61,7 @@ export default function Donate() {
 
   return (
     <>
-      <section className="about-hero band">
-        <div className="wrap">
-          <div className="eyebrow" style={{ marginBottom: 22 }}>{t('Donate')}</div>
-          <h1 className="caps ah-title" aria-label={t('Give a young woman a trade.')}>
-            <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, ease }}>{t('Give a young woman')}</motion.span></span>
-            <span className="ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1, ease }}>{t('a trade.')}</motion.span></span>
-          </h1>
-          <motion.p className="ah-lead" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.8 }}>
-            {t('Your gift funds training, real work and lasting support for abandoned girls and women in Kigali.')}
-          </motion.p>
-        </div>
-      </section>
+      <PageTitle section="donate.hero" eyebrow="Donate" a="Give a young woman" b="a trade." lead="Your gift funds training, real work and lasting support for abandoned girls and women in Kigali." />
 
       <section className="sec wrap">
         <div className="don">

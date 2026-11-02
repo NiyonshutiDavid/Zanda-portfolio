@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { COLS, PRODUCTS, SERVICES, fmt } from '../data/store'
+import { SERVICES, fmt } from '../data/store'
+import { useContent } from '../lib/content'
 import { useT } from '../i18n'
 
 const PHONE = '+250 780 162 164'
@@ -18,7 +19,7 @@ const TOPICS = [
 
 // A simple rule-based helper. It answers from the information on this website and hands over to people for anything else.
 // `t` translates the answer into the visitor's language; the keywords are matched against the English question.
-function reply(text, t = (s) => s) {
+function reply(text, t = (s) => s, { COLS, PRODUCTS }) {
   const lc = text.toLowerCase()
   const has = (...w) => w.some((x) => lc.includes(x))
 
@@ -62,6 +63,7 @@ function reply(text, t = (s) => s) {
 }
 
 export default function Chat() {
+  const shop = useContent()
   const t = useT()
   const nav = useNavigate()
   const [open, setOpen] = useState(false)
@@ -101,7 +103,7 @@ export default function Chat() {
     } catch {
       // No key configured or the service is busy: fall back to the built-in keyword helper.
       setMode('basic')
-      const a = reply(q, t)
+      const a = reply(q, t, shop)
       await new Promise((res) => setTimeout(res, 550))
       setMsgs((m) => [...m, { from: 'bot', ...a }])
     } finally {
