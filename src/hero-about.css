@@ -866,20 +866,51 @@ html.ov.hero-light .top .links a::after,html.ov.hero-light .top .dd>button::afte
 .ck-link{background:none;border:0;padding:0;color:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font:inherit}
 @media (max-width:560px){.ck{left:8px;right:8px;bottom:8px;width:auto}.ck-b .btn{flex:1 1 auto;justify-content:center}}
 
-/* Bordered circle pointer (mouse only). Over plain pictures it magnifies; over anything clickable the normal pointer returns. */
-.cur{display:none}
-.has-cursor .cur{display:block;position:fixed;left:0;top:0;z-index:1000;width:34px;height:34px;border-radius:50%;pointer-events:none;opacity:0;
-  background-color:rgba(247,243,236,.12);background-repeat:no-repeat;border:2px solid #BCA879;
-  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
-  box-shadow:0 6px 22px rgba(7,51,44,.22);
-  transition:opacity .25s,width .35s var(--ease),height .35s var(--ease),border-color .3s;will-change:transform}
-.has-cursor .cur.on{opacity:1}
-.has-cursor .cur.off{opacity:0}
-.has-cursor .cur.zoom{width:150px;height:150px;border-color:#F7F3EC;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 10px 36px rgba(7,51,44,.35),inset 0 0 0 1px rgba(7,51,44,.25)}
-.has-cursor .cur.press{border-width:3px}
-.has-cursor:not(.cur-native),.has-cursor:not(.cur-native) *{cursor:none!important}
-.has-cursor.cur-native a,.has-cursor.cur-native button,.has-cursor.cur-native [role="button"],.has-cursor.cur-native [role="tab"],.has-cursor.cur-native [role="radio"],.has-cursor.cur-native summary,.has-cursor.cur-native label,.has-cursor.cur-native select,.has-cursor.cur-native .hit,.has-cursor.cur-native .cat,.has-cursor.cur-native .pay{cursor:pointer}
-.has-cursor.cur-native input,.has-cursor.cur-native textarea{cursor:text}
+/* Custom branded pointer (mouse only): green website color with khaki/gold border */
+:root {
+  --cur-default: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M2%202L2%2019L6.8%2014.8L10.5%2022L13.2%2020.6L9.5%2013.5L15.8%2013.5L2%202Z%22%20fill%3D%22%23134E46%22%20stroke%3D%22%23BCA879%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") 2 2, auto;
+  --cur-pointer: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M7.5%201.5C8.3%201.5%209%202.2%209%203V9.5H10C10.8%209.5%2011.5%2010.2%2011.5%2011C11.5%2011.2%2011.4%2011.4%2011.3%2011.6C11.8%2011.8%2012.2%2012.3%2012.2%2013C12.2%2013.2%2012.1%2013.4%2012%2013.6C12.5%2013.9%2012.8%2014.4%2012.8%2015C12.8%2016.2%2011.8%2017.2%2010.6%2017.5L9.5%2019.5C9.1%2020.3%208.3%2020.8%207.4%2020.8H5.2C4.3%2020.8%203.5%2020.2%203.3%2019.3L2.5%2015.5C2.3%2014.6%202.8%2013.8%203.6%2013.5L5.5%2012.8V3C5.5%202.2%206.2%201.5%207.5%201.5Z%22%20fill%3D%22%23134E46%22%20stroke%3D%22%23BCA879%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") 7 2, pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor body {
+    cursor: var(--cur-default);
+  }
+
+  html.has-cursor a,
+  html.has-cursor button,
+  html.has-cursor [role="button"],
+  html.has-cursor [role="tab"],
+  html.has-cursor [role="radio"],
+  html.has-cursor summary,
+  html.has-cursor label,
+  html.has-cursor select,
+  html.has-cursor .hit,
+  html.has-cursor .cat,
+  html.has-cursor .pay,
+  html.has-cursor .btn,
+  html.has-cursor .crumb a,
+  html.has-cursor .crumb button,
+  html.has-cursor .opt,
+  html.has-cursor .check,
+  html.has-cursor .ck-link,
+  html.has-cursor .bp-up,
+  html.has-cursor .bp-up input,
+  html.has-cursor .dsel-list li {
+    cursor: var(--cur-pointer);
+  }
+
+  html.has-cursor .btn:disabled,
+  html.has-cursor button:disabled {
+    cursor: not-allowed;
+  }
+
+  html.has-cursor input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  html.has-cursor textarea {
+    cursor: text;
+  }
+}
 
 /* Language switch */
 .lang{display:inline-flex;border-radius:999px;padding:3px;box-shadow:inset 0 0 0 1.5px currentColor;gap:2px}
